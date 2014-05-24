@@ -56,10 +56,18 @@ If there is no console to use specified (as -b, -i, -p) it tries IPython, then f
         {
             'name': 'ipython',
             'short': 'i',
-            'long': 'plain',
+            'long': 'ipython',
             'type': bool,
             'default': False,
             'help': 'Use IPython',
+        },
+        {
+            'name': 'ipykernel',
+            'short': 'k',
+            'long': 'ipython-kernel',
+            'type': bool,
+            'default': False,
+            'help': 'Use IPython Kernel',
         },
         {
             'name': 'plain',
@@ -71,7 +79,7 @@ If there is no console to use specified (as -b, -i, -p) it tries IPython, then f
         },
     ]
 
-    def ipython(self, willful=True):
+    def ipython(self, willful=True, kernel=False):
         """IPython shell."""
         try:
             import IPython
@@ -83,7 +91,10 @@ If there is no console to use specified (as -b, -i, -p) it tries IPython, then f
             site = self.context['site']  # NOQA
             conf = self.context['conf']  # NOQA
             commands = self.context['commands']  # NOQA
-            IPython.embed(header=self.header.format('IPython'))
+            if kernel is True:
+                IPython.embed_kernel()
+            else:
+                IPython.embed(header=self.header.format('IPython'))
 
     def bpython(self, willful=True):
         """bpython shell."""
@@ -131,6 +142,8 @@ If there is no console to use specified (as -b, -i, -p) it tries IPython, then f
             self.bpython(True)
         elif options['ipython']:
             self.ipython(True)
+        elif options['ipykernel']:
+            self.ipython(True, kernel=True)
         elif options['plain']:
             self.plain(True)
         else:
